@@ -5,8 +5,8 @@ namespace ApiVersioning.Controllers
 {
     [ApiController]
     [ApiVersion("1.0", Deprecated = true)]
-    [ApiVersion("2.0")]
-    [ApiVersion("3.0")]
+    [ApiVersion("2.0")] //Actual version
+    [ApiVersion("3.0")] //Beta-version
     [Route("api/[controller]")]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class WeatherForecastController : ControllerBase

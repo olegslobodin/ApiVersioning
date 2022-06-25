@@ -6,12 +6,11 @@ const int DEFAULT_API_VERSION = 2;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.ConfigureSwaggerGen(options =>
 {
-    options.ResolveConflictingActions(ApiDescriptionConflictResolver.PreferDefaultOrLatestApiVersion(DEFAULT_API_VERSION));
+    options.ResolveConflictingActions(ApiDescriptionConflictResolver.PreferDefaultOrLatestApiVersion(DEFAULT_API_VERSION)); //Custom conflicts resolver
 });
 
 builder.Services.AddApiVersioning(options =>

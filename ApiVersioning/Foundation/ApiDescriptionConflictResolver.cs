@@ -5,6 +5,13 @@ namespace ApiVersioning.Foundation
 {
     public static class ApiDescriptionConflictResolver
     {
+        /// <summary>
+        /// Builds a conflicts resolver which checks <see cref="MapToApiVersionAttribute"/> for each conflicting method.<br/>
+        /// Methods with default API version are preferred if <paramref name="defaultApiVersion"/> is specified.<br/>
+        /// If <paramref name="defaultApiVersion"/> is not specified, method with the latest API version is chosen.
+        /// </summary>
+        /// <param name="defaultApiVersion"></param>
+        /// <returns>API Description resolver func</returns>
         public static Func<IEnumerable<ApiDescription>, ApiDescription> PreferDefaultOrLatestApiVersion(int? defaultApiVersion = null) =>
             (IEnumerable<ApiDescription> descriptions) => PreferDefaultOrLatestApiVersion(descriptions, defaultApiVersion);
 
