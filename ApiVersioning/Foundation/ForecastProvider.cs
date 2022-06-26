@@ -22,6 +22,6 @@
             .Select(EnrichForecast)
             .ToArray();
 
-        private static DetailedWeatherForecast EnrichForecast(WeatherForecast forecast, int dayNumber) => new(forecast, dayNumber);
+        private static DetailedWeatherForecast EnrichForecast(WeatherForecast forecast, int dayNumber) => new(forecast, dayNumber + 1);
     }
 }

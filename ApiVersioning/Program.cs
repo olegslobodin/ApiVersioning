@@ -1,27 +1,37 @@
 using ApiVersioning.Foundation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using System.Reflection;
 
-const int DEFAULT_API_VERSION = 2;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    //Include <summary></summary> comments
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+});
 builder.Services.ConfigureSwaggerGen(options =>
 {
-    options.ResolveConflictingActions(ApiDescriptionConflictResolver.PreferDefaultOrLatestApiVersion(DEFAULT_API_VERSION)); //Custom conflicts resolver
+    options.ResolveConflictingActions(ApiDescriptionConflictResolver.PreferDefaultOrLatestApiVersion(Constants.DefaultApiVersion)); //Custom conflicts resolver
 });
 
 builder.Services.AddApiVersioning(options =>
 {
-    options.DefaultApiVersion = new ApiVersion(DEFAULT_API_VERSION, 0);
+    options.DefaultApiVersion = new ApiVersion(Constants.DefaultApiVersion, 0);
     options.AssumeDefaultVersionWhenUnspecified = true;
     options.ReportApiVersions = true;
     options.ApiVersionReader = ApiVersionReader.Combine(
         new HeaderApiVersionReader("X-Api-Version"),
         new MediaTypeApiVersionReader("version"),
         new QueryStringApiVersionReader("version"));
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: Constants.Policies.AllowOrigin.Any, policy => policy.AllowAnyOrigin());
+    options.AddPolicy(name: Constants.Policies.AllowOrigin.Google, policy => policy.WithOrigins("https://www.google.com"));
 });
 
 var app = builder.Build();
@@ -33,6 +43,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseAuthorization();
 
