@@ -1,6 +1,7 @@
 using ApiVersioning.Foundation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.OpenApi.Models;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,9 +9,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(options =>
 {
-    //Include <summary></summary> comments
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));    //Include <summary></summary> comments
+    options.SwaggerDoc(Constants.SwaggerDocumentVersion, new OpenApiInfo
+    {
+        Version = Constants.SwaggerDocumentVersion,
+        Title = "ApiVersioning",
+        Description = "Sample usage of API versioning with Swagger"
+    });
 });
 builder.Services.ConfigureSwaggerGen(options =>
 {
@@ -38,8 +44,8 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwagger(options => options.RouteTemplate = "swagger/{documentName}/swagger.json");
+    app.UseSwaggerUI(options => options.SwaggerEndpoint($"/swagger/{Constants.SwaggerDocumentVersion}/swagger.json", $"Swagger {Constants.SwaggerDocumentVersion}"));
 }
 
 app.UseHttpsRedirection();

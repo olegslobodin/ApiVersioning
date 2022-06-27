@@ -6,10 +6,10 @@ namespace ApiVersioning.Controllers
 {
     [ApiController]
     [ApiVersion("1.0", Deprecated = true)]
-    [ApiVersion("2.0")] //Actual version
-    [ApiVersion("3.0")] //Beta-version
-    [Route("api/[controller]")]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("2.0")] //Actual version (is default)
+    [ApiVersion("3.0")] //Beta version
+    [Route("api/[controller]")] //Version must be specified in Header, Media type or Query string
+    [Route("api/v{version:apiVersion}/[controller]")]   //Duplicate endpoints with ability to specify version in route
     [Produces("application/json")]
     [EnableCors(Constants.Policies.AllowOrigin.Any)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -59,6 +59,16 @@ namespace ApiVersioning.Controllers
             ValidateForecastDays(days, out var error)
             ? ForecastProvider.GetRandomDetailedForecast(days)
             : BadRequest(error);
+
+        /// <remarks>
+        /// Is removed in v3
+        /// </remarks>
+        [HttpGet("current")]
+        [Obsolete("'current' endpoint is removed in v3")]
+        [MapToApiVersion("1.0")]
+        [MapToApiVersion("2.0")]
+        [DisableCors]
+        public WeatherForecast GetCurrent() => new(DateTime.Now, 25, "Warm");
 
 
         private static bool ValidateForecastDays(int days, out string errorMessage)

@@ -4,6 +4,8 @@
     {
         public const int DefaultApiVersion = 2;
 
+        public static string SwaggerDocumentVersion => $"v{DefaultApiVersion}";
+
         public static class Forecasts
         {
             public static class Params
